@@ -12,10 +12,6 @@ namespace EF_Core_Quering.Entities
         public string Name { get; set; }
         public string Url { get; set; }
 
-        public virtual List<Blog> Blogs { get; set; } = new List<Blog>();
-        //public Blog()
-        //{
-        //    Blogs = new List<Blog>();
-        //}
+        public virtual List<Post> Posts { get; set; } = new List<Post>();
     }
 }
