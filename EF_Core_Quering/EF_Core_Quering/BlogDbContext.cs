@@ -14,7 +14,7 @@ namespace EF_Core_Quering
         public DbSet<Post> Posts { get; set; }
         public DbSet<User> Users { get; set; }
 
-        public BlogDbContext(DbContextOptions options) : base(options)
+        public BlogDbContext() : base()
         {
 
         }
