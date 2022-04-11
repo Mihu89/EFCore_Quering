@@ -1,6 +1,7 @@
 ﻿using EF_Core_Quering.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace EF_Core_Quering
@@ -10,10 +11,47 @@ namespace EF_Core_Quering
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            SimpleQuering();
+            //SimpleQuering();
 
+            FasterSelect();
             Console.WriteLine("End");
             Console.ReadLine();
+        }
+
+        private static void FasterSelect()
+        {
+            var timer = new Stopwatch();
+            var db = new BlogDbContext();
+            timer.Start();
+            var post = db.Posts.ToList();
+            timer.Stop();
+            Console.WriteLine("Simple: " + timer.ElapsedTicks);
+            timer.Reset();
+            timer.Start();
+            post = db.Posts
+                    .AsNoTracking()
+                    .ToList();
+            timer.Stop();
+            Console.WriteLine("Fast " + timer.ElapsedTicks);
+            timer.Reset();
+
+            timer.Start();
+            var post1 = db.Posts
+                    .ToArray();
+            timer.Stop();
+            Console.WriteLine("Fast 2 " + timer.ElapsedTicks);
+
+            timer.Reset();
+
+            timer.Start();
+            post1 = db.Posts.AsNoTracking()
+                    .ToArray();
+            timer.Stop();
+            Console.WriteLine("Fast 3 " + timer.ElapsedTicks);
+
+            // Execute raw sql code
+            var posts = db.Posts.FromSqlRaw("Select * from dbo.Posts WITH (NOLOCK)").ToArray();
+            Console.WriteLine(posts.Length);
         }
 
         private static void SimpleQuering()
@@ -21,7 +59,7 @@ namespace EF_Core_Quering
             // extract all posts that contains C#
             var db = new BlogDbContext();
 
-            db.Posts.Add(new Post() { Title = "Fresh", Content = " Fresh Post C#", Blog = db.Blogs.FirstOrDefault() });
+           // db.Posts.Add(new Post() { Title = "Fresh", Content = " Fresh Post C#", Blog = db.Blogs.FirstOrDefault() });
             var posts = db.Posts
                         .Include(x => x.Blog)
                         .Where(x => x.Title.Contains("C#") || x.Content.Contains("C#"))
