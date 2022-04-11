@@ -1,0 +1,2 @@
+﻿-- Delete a specific migration from MigrationHistory
+delete from __EFMigrationsHistory where MigrationId='xxx'
