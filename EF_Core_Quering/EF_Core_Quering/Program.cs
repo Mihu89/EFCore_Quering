@@ -1,4 +1,5 @@
 ﻿using EF_Core_Quering.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 
@@ -20,7 +21,9 @@ namespace EF_Core_Quering
             // extract all posts that contains C#
             var db = new BlogDbContext();
 
-            var posts = db.Posts.Where(x => x.Title.Contains("C#") || x.Content.Contains("C#"));
+            var posts = db.Posts
+                        .Include(x => x.Blog)
+                        .Where(x => x.Title.Contains("C#") || x.Content.Contains("C#"));
             foreach (var post in posts)
             {
                 Console.WriteLine($"PostID:{post.Id} {post.Title} {post.Content}, BlogID: {post.Blog.Id}");
